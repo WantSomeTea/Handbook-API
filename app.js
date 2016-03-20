@@ -1,19 +1,18 @@
 var app = require('express')();
-var path = require('path');
+// var path = require('path');
 var morgan = require('morgan');
-var cookieParser = require('cookie-parser');
+// var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 
 app.use(morgan('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(bodyParser.json()); // Позволяет передавать в body запроса json
+app.use(bodyParser.urlencoded({ extended: false })); // позволяет передавать в body запроса key=value
+// app.use(cookieParser()); // TODO: Зачем нужна?
 
-app.use('/', routes);
-app.use('/users', users);
+// routes
+app.use('/api', routes); // API контактов
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -45,6 +44,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;
