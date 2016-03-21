@@ -17,7 +17,17 @@ router.route('/:userId')
   // GET contact by userId
   .get(function(req, res) {
     var user = {name:"Alex", department:"New"}; // TODO: Выдавать объект из базы данных
-    res.json(user);
+    //получить пользователя по имени и департаменту
+    /*список доступных моделей libs/defineModels*/
+    req.models.employees.find(user, function (err, result) {
+      if(err) {
+        console.log(err);
+      } else {
+        res.send(result[0]);
+      }/*fixme даааа, это x2 табы у Павла Трофимова :D*/
+    });
+
+    //res.json(user);
   });
 
 module.exports = router;

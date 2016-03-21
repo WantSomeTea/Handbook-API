@@ -15,6 +15,8 @@ app.use(bodyParser.urlencoded({ extended: false })); // позволяет пе�
 // routes
 app.use('/api', routes); // API контактов
 
+var connect = require('./libs/connect')(app);
+
 // views
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
