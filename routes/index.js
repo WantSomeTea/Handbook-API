@@ -6,8 +6,8 @@ router.get('/', function(req, res, next) {
   res.status(200).send("It works.");
 });
 
-var contacts = require('./contacts');
+var employees = require('./employees');
 
-router.use('/contacts', contacts);
+router.use('/employees', employees);
 
 module.exports = router;

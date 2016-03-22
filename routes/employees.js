@@ -7,7 +7,7 @@ router.use(function(req, res, next) {
 });
 
 router.route('/')
-  // GET all contacts
+  // GET all employees
   .get(function(req, res) {
     var users = {}; // TODO: Выдавать все контакты из базы данных
     res.json(users);
