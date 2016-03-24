@@ -2,6 +2,7 @@
 logs
 *.log
 npm-debug.log*
+.remote-sync.*
 
 # Dependency directories
 node_modules
