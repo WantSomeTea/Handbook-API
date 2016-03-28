@@ -40,9 +40,11 @@ module.exports = function (db) {
       type: 'number',
       required: true
     },
-    id_department: {
-      type: 'number',
-      required: true
+    key: {
+      type: 'text'
+    },
+    sms_code: {
+      type: 'text'
     }
   }, {
     methods: {
