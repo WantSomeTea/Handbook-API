@@ -2,8 +2,8 @@
   "db": {
     "host": "localhost",
     "port": 3306,
-    "base": "handbook",
-    "user": "king",
-    "password": "longlivetheking"
+    "base": "mydb",
+    "user": "root",
+    "password": "secret"
   }
 }

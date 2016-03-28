@@ -5,12 +5,29 @@ var morgan = require('morgan');
 // var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
+var api = require('./routes/index');
 
 app.use(morgan('dev'));
 app.use(bodyParser.json()); // Позволяет передавать в body запроса json
 app.use(bodyParser.urlencoded({ extended: false })); // позволяет передавать в body запроса key=value
 // app.use(cookieParser()); // TODO: Зачем нужна?
+
+/*
+req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
+ res: 200/404
+
+ req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
+ res: 200/404 + key(52)
+
+ req: https://ip/api/v1/reg/check_sms/params(code, phonenumber, key)
+ res: 403/200
+
+ наверно последнее действие должно быть отдельным запросом
+ запрос тел.книги:
+ req: https://ip/api/v1/app/get_phonebook/params(phonenumber, key)
+ res: 403/200 + data
+
+ */
 
 // views
 // view engine setup
@@ -22,7 +39,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 require('./libs/connect')(app);
 
 // routes
-app.use('/api', routes); // API контактов
+app.use('/api', api);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
