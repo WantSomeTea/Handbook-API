@@ -1,9 +1,9 @@
 {
   "db": {
-    "host": "localhost",
+    "host": "handbook.c07hzlsjk6tk.eu-west-1.rds.amazonaws.com",
     "port": 3306,
-    "base": "mydb",
-    "user": "root",
-    "password": "secret"
+    "base": "handbook",
+    "user": "king",
+    "password": "longlivetheking"
   }
 }

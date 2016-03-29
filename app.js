@@ -12,6 +12,9 @@ app.use(bodyParser.json()); // Позволяет передавать в body �
 app.use(bodyParser.urlencoded({ extended: false })); // позволяет передавать в body запроса key=value
 // app.use(cookieParser()); // TODO: Зачем нужна?
 
+// TODO: другой логгер, это так, потестить
+console.log("API STARTED");
+
 /*
 req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
  res: 200/404
@@ -33,6 +36,10 @@ req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+app.set('port', process.env.PORT || 3000);
+
+app.listen(app.get('port'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
