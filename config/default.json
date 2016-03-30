@@ -5,5 +5,9 @@
     "base": "handbook",
     "user": "king",
     "password": "longlivetheking"
-  }
+  },
+  "ports": {
+    "default": 3000
+  },
+  "host": "localhost"
 }

@@ -4,16 +4,25 @@ var path = require('path');
 var morgan = require('morgan');
 // var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var config = require('config');
 
 var api = require('./routes/index');
+
+var http = require('http');
+
 
 app.use(morgan('dev'));
 app.use(bodyParser.json()); // Позволяет передавать в body запроса json
 app.use(bodyParser.urlencoded({ extended: false })); // позволяет передавать в body запроса key=value
 // app.use(cookieParser()); // TODO: Зачем нужна?
 
-// TODO: другой логгер, это так, потестить
-console.log("API STARTED");
+app.set('port', process.env.PORT || 3000);
+
+http
+  .createServer(app)
+  .listen(config.get('ports.default'));
+
+console.log("SERVER STARTED: " + config.get('ports.default'));
 
 /*
 req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
@@ -37,10 +46,6 @@ req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.set('port', process.env.PORT || 3000);
-
-app.listen(app.get('port'));
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 require('./libs/connect')(app);
@@ -62,22 +67,14 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    res.sendStatus(err.status || 500);
   });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+  res.sendStatus(err.status || 500);
 });
 
 module.exports = app;
