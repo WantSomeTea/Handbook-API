@@ -10,7 +10,7 @@
 
 function getJobParams(companyID, jobID, req, callback) {
   var jobEmployee = {};
-  req.models.company.find({id_company: companyID}, function (err, result) {
+  req.models.companies.find({id_company: companyID}, function (err, result) {
     if (err) {
       jobEmployee.companyName = null;
     } else {
@@ -20,7 +20,7 @@ function getJobParams(companyID, jobID, req, callback) {
           jobEmployee.jobName = null;
         } else {
           jobEmployee.jobName = result[0].name;
-          req.models.department.find({id_department: result[0].id_department}, function (err, result) {
+          req.models.departments.find({id_department: result[0].id_department}, function (err, result) {
             if (err) {
               jobEmployee.departmentName = null;
             } else {

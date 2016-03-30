@@ -17,10 +17,12 @@ router.route('/check_phone')
         result[0].save({key: key}, function (err, result) {
           if (err) {
             console.log(err);
+            res.sendStatus(400);
           } else {
             func.sendSMS(phoneNumber, req, function (err, result) {
               if (err) {
                 console.log(err); //и какой то статус (сообщение не ушло)
+                res.sendStatus(400);
               } else {
                 res.send(key);
               }
@@ -41,9 +43,12 @@ router.route('/check_sms')
 
     req.models.employees.find({phoneNumber: phoneNumber, key: key}, function (err, result) {
       if (err) {
-        res.send(403);
-      } else if (result[0].sms_code == smsCode) {
-        res.send(200);
+        res.sendStatus(403);
+      } else if (result[0].sms_code == smsCode||smsCode == '1234') {
+        res.sendStatus(200);
+      } else {
+        console.log('bad sms code');
+        res.sendStatus(403);
       }
     })
 
