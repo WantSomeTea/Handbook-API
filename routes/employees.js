@@ -9,7 +9,7 @@ router.use(function (req, res, next) {
 });
 
 router.route('/phonebook')
-  .get(function (req, res, next) {
+  .get(function (req, res) {
     var phoneNumber = req.query.phoneNumber;
     /*todo это если запрос в виде /get_PB?phoneNumber=11111&key=qwe*/
     var key = req.query.key;
@@ -35,26 +35,28 @@ router.route('/phonebook')
                 };
                 resObj.push(obj);
                 callback();
-              })
+              });
             }, function (err) {
               if (err) {
                 console.log(err);
               } else {
                 res.send(resObj);
               }
-            })
+            });
           }
-        })
+        });
       } else {
         res.send(403);
       }
-    })
+    });
   });
 
 
 router.route('/')
   // GET all employees
   .get(function (req, res) {
+    var params = req.params;
+    debug(params);
     var users = {}; // TODO: Выдавать все контакты из базы данных
     res.json(users);
   });

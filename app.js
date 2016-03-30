@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var morgan = require('morgan');
+var debug = require('debug')('app');
 // var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var config = require('config');
@@ -10,19 +11,10 @@ var api = require('./routes/index');
 
 var http = require('http');
 
-
 app.use(morgan('dev'));
 app.use(bodyParser.json()); // Позволяет передавать в body запроса json
 app.use(bodyParser.urlencoded({ extended: false })); // позволяет передавать в body запроса key=value
 // app.use(cookieParser()); // TODO: Зачем нужна?
-
-app.set('port', process.env.PORT || 3000);
-
-http
-  .createServer(app)
-  .listen(config.get('ports.default'));
-
-console.log("SERVER STARTED: " + config.get('ports.default'));
 
 /*
 req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
@@ -38,8 +30,7 @@ req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
  запрос тел.книги:
  req: https://ip/api/v1/app/get_phonebook/params(phonenumber, key)
  res: 403/200 + data
-
- */
+*/
 
 // views
 // view engine setup
@@ -52,7 +43,6 @@ require('./libs/connect')(app);
 
 // routes
 app.use('/api', api);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
