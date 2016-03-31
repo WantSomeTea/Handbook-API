@@ -10,7 +10,20 @@ router.use(function (req, res, next) {
 });
 
 router.route('/check_phone')
-  .get(function (req, res, next) {
+  .get(function (req, res) { // Доделать! в func.js тоже хрень какая-то
+    // 1. Check phone
+    // 2. sendSMS
+    checkPhone(req, function(err, phone) {
+
+      sendSMS(phone, function(err, result) {
+        if (err) {
+          res.status(err.status).send();
+        } else {
+          res.status(200).send();
+        }
+      });
+    });
+
     var phoneNumber = req.query.phoneNumber;
     req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
       if (result[0]) {
@@ -40,7 +53,7 @@ router.route('/check_sms')
   .get(function (req, res) {
     checkSMS(req, function(err, result) {
       if (err) {
-        res.status(err).send();
+        res.status(err.status).send();
       } else {
         debug('Wrong sms code', result);
         res.status(200).send();

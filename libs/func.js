@@ -1,3 +1,6 @@
+var keygen = require('keygen');
+var httpError = require('./error');
+
 /**
  * @method getJobName - для получения названия департамента, должности и компании
  * @param jobID
@@ -55,38 +58,43 @@ exports.checkUser = function(phoneNumber, key, req, callback) {
  * 500
  * 200
  */
-exports.sendSMS = function (req, callback) {
+exports.sendSMS = function (req, callback) { //TODO: Доделать функцию! Пока сделана хрень и работать сто пудов не будет
   var smsCode = (Math.floor(Math.random() * (9999 - 1000) + 1000)).toString();
   //TODO: как то отправляем смс
-  
+
   var phoneNumber = req.query.phoneNumber;
   req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
-    if (result[0]) {
-      var key = keygen.url(keygen.large);
-      result[0].save({key: key}, function (err, result) {
-        if (err) {
-          console.log(err);
-          res.sendStatus(400);
-        } else {
-          func.sendSMS(phoneNumber, req, function (err, result) {
-            if (err) {
-              console.log(err); //и какой то статус (сообщение не ушло)
-              res.sendStatus(400);
-            } else {
-              res.send(key);
-            }
-          });
-        }
-      });
+    if (err) {
+      callback(httpError(500, "Database Error (find{phoneNumber})"), null);
+    } else if (result == null) { //NOTE: or undefined?
+      callback(httpError(400, "Empty result (find{phoneNumber})"), null);
     } else {
-      res.send(403);
+      if (result[0]) {
+        var key = keygen.url(keygen.large);
+        result[0].save({key: key}, function (err, result) {
+          if (err) {
+            callback(httpError(500, "Database Error (save{key})"), null);
+          } else {
+            req.models.employees.find({phoneNumber: phoneNumber}, function (err, result) {
+              if (err) {
+                callback(httpError(500, "Database Error (find{phoneNumber})"), null);
+              } else {
+                result[0].sms_code = smsCode;
+                result[0].save(function (err, result) {
+                  if (err) {
+                    callback(httpError(500, "Database Error (save{})"), null);
+                  } else {
+                    callback(null, result);
+                  }
+                });
+              }
+            });
+          }
+        });
+      } else {
+        res.send(403);
+      }
     }
-  });
-  req.models.employees.find({phoneNumber: phoneNumber}, function (err, result) {
-    result[0].sms_code = smsCode;
-    result[0].save(function (err, result) {
-      callback(err, result);
-    });
   });
 };
 
@@ -94,6 +102,7 @@ exports.sendSMS = function (req, callback) {
  * Проверка SMS- кода
  * 400
  * 403
+ * 500
  * 200
  */
 exports.checkSMS = function(req, callback) {
@@ -103,10 +112,12 @@ exports.checkSMS = function(req, callback) {
 
   req.models.employees.find({phoneNumber: phoneNumber, key: key}, function (err, result) {
     if (err) {
-      callback(400, null);
+      callback(httpError(500, "Database Error"), null);
+    } else if (result == null) { //NOTE: or undefined?
+      callback(httpError(400, "Empty result"), null);
     } else {
       if (result[0].sms_code !== smsCode) {
-        callback(403, null);
+        callback(httpError(403, "Wrong SMS code"), null);
       } else {
         callback(null, result);
       }
