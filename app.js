@@ -9,17 +9,12 @@ var config = require('config');
 
 var api = require('./routes/index');
 
-var http = require('http');
-
 app.use(morgan('dev'));
 app.use(bodyParser.json()); // Позволяет передавать в body запроса json
 app.use(bodyParser.urlencoded({ extended: false })); // позволяет передавать в body запроса key=value
 // app.use(cookieParser()); // TODO: Зачем нужна?
 
 /*
-req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
- res: 200/404
-
  req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
  res: 200/404 + key(52)
 

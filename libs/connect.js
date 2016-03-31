@@ -2,7 +2,7 @@
  * Created by pavtr_000 on 21.03.2016.
  */
 
-var config = require('./../config/default.json');
+var config = require('config');
 var orm = require('orm');
 var db = config.db;
 module.exports = function (app) {

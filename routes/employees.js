@@ -1,66 +1,42 @@
 var express = require('express');
 var router = express.Router();
-var async = require('async');
-var func = require('../lib/func');
+var debug = require('debug')('routes:employees');
+var controller = require('../controllers/employees');
 
 router.use(function (req, res, next) {
-  console.log("Contacts API request");
+  console.log("Employees API request");
   next();
 });
 
-router.route('/phonebook')
+/**
+ * @api {get} /v1/app/employees/ Employees
+ * @apiName Employees:GET
+ * @apiGroup group
+ *
+ * @apiParam {String} phoneNumber
+ * @apiParam {String} key
+ * 
+ * @apiSuccess {Object} Книга контактов
+ */
+router.route('/')
   .get(function (req, res) {
-    var phoneNumber = req.query.phoneNumber;
-    /*todo это если запрос в виде /get_PB?phoneNumber=11111&key=qwe*/
-    var key = req.query.key;
-
-    func.checkUser(phoneNumber, key, req, function (authStatus, idCompany) {
-      if (authStatus == 200) {
-        req.models.employees.find({id_company: idCompany}, function (err, result) {
-          if (err) {
-            console.log(err);
-          } else {
-            var resObj = [];
-            async.forEach(result, function (employee, callback) {
-              func.getJobParams(employee.id_company, employee.id_job, req, function (jobEmployee) {
-                var obj = {
-                  name: employee.fullName(),
-                  phoneNumber: employee.phone_number,
-                  workNumber: employee.work_number,
-                  email: employee.email,
-                  additionalNumbs: employee.additional_numbers,
-                  companyName: jobEmployee.companyName,
-                  jobName: jobEmployee.jobName,
-                  departmentName: jobEmployee.departmentName
-                };
-                resObj.push(obj);
-                callback();
-              });
-            }, function (err) {
-              if (err) {
-                console.log(err);
-              } else {
-                res.send(resObj);
-              }
-            });
-          }
-        });
+    controller.employeesWithCompanyID(req, function(err, book) {
+      if (err) {
+        res.status(err.status).send();
       } else {
-        res.send(403);
+        debug(book);
+        res.status(200).send(book);
       }
     });
   });
 
-
-router.route('/')
-  // GET all employees
-  .get(function (req, res) {
-    var params = req.params;
-    debug(params);
-    var users = {}; // TODO: Выдавать все контакты из базы данных
-    res.json(users);
+router.route('/test')
+  .get(function(req, res) {
+    debug(req);
+    res.status(200).send();
   });
 
+// Нужна ли будет функция в будущем?
 router.route('/:userId')
   // GET contact by userId
   .get(function (req, res) {

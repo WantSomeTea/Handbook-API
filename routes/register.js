@@ -1,61 +1,49 @@
 var express = require('express');
 var router = express.Router();
-var keygen = require('keygen');
 var debug = require('debug')('routes:register');
-var func = require('../lib/func');
+var controller = require('../controllers/register');
 
 router.use(function (req, res, next) {
-  console.log("Contacts API request");
+  console.log("Register API request");
   next();
 });
 
+/**
+ * @api {get} /v1/reg/check_phone [1] Check Phone
+ * @apiName Register:checkPhoneAndSendSMS
+ *
+ * @apiParam {String} phoneNumber
+ *
+ * @apiSuccess {String} key
+ */
 router.route('/check_phone')
-  .get(function (req, res) { // Доделать! в func.js тоже хрень какая-то
-    // 1. Check phone
-    // 2. sendSMS
-    checkPhone(req, function(err, phone) {
-
-      sendSMS(phone, function(err, result) {
-        if (err) {
-          res.status(err.status).send();
-        } else {
-          res.status(200).send();
-        }
-      });
-    });
-
-    var phoneNumber = req.query.phoneNumber;
-    req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
-      if (result[0]) {
-        var key = keygen.url(keygen.large);
-        result[0].save({key: key}, function (err, result) {
-          if (err) {
-            console.log(err);
-            res.sendStatus(400);
-          } else {
-            func.sendSMS(phoneNumber, req, function (err, result) {
-              if (err) {
-                console.log(err); //и какой то статус (сообщение не ушло)
-                res.sendStatus(400);
-              } else {
-                res.send(key);
-              }
-            });
-          }
-        });
+  .get(function (req, res) {
+    controller.checkPhoneAndSendSMS(req, function(err, key) {
+      if (err) {
+        res.status(err.status).send();
       } else {
-        res.send(403);
+        res.status(200).send(key);
       }
     });
   });
 
+/**
+ * @api {get} /v1/reg/check_sms [2] Check SMS
+ * @apiName Register:checkSMS
+ *
+ * @apiParam {String} phoneNumber
+ * @apiParam {String} smsCode
+ * @apiParam {String} key
+ *
+ * @apiSuccess {Status} 200
+ */
 router.route('/check_sms')
   .get(function (req, res) {
-    checkSMS(req, function(err, result) {
+    controller.checkSMS(req, function(err, result) {
       if (err) {
         res.status(err.status).send();
       } else {
-        debug('Wrong sms code', result);
+        debug(result);
         res.status(200).send();
       }
     });
