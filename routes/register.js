@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var keygen = require('keygen');
-var func = require('./func');
+var debug = require('debug')('routes:register');
+var func = require('../lib/func');
 
 router.use(function (req, res, next) {
   console.log("Contacts API request");
@@ -26,32 +27,25 @@ router.route('/check_phone')
               } else {
                 res.send(key);
               }
-            })
+            });
           }
-        })
+        });
       } else {
         res.send(403);
       }
-    })
+    });
   });
 
 router.route('/check_sms')
-  .get(function (req, res, next) {
-    var smsCode = req.query.code;
-    var key = req.query.key;
-    var phoneNumber = req.query.phoneNumber;
-
-    req.models.employees.find({phoneNumber: phoneNumber, key: key}, function (err, result) {
+  .get(function (req, res) {
+    checkSMS(req, function(err, result) {
       if (err) {
-        res.sendStatus(403);
-      } else if (result[0].sms_code == smsCode||smsCode == '1234') {
-        res.sendStatus(200);
+        res.status(err).send();
       } else {
-        console.log('bad sms code');
-        res.sendStatus(403);
+        debug('Wrong sms code', result);
+        res.status(200).send();
       }
-    })
-
+    });
   });
 
 module.exports = router;

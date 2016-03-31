@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var func = require('./func');
+var func = require('../lib/func');
 
 router.use(function (req, res, next) {
   console.log("Contacts API request");
