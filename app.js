@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // позволяет пе�
 
 /*
  req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
- res: 200/404 + key(52)
+ res: 200/404 + key(52) + paths
 
  req: https://ip/api/v1/reg/check_sms/params(code, phonenumber, key)
  res: 403/200

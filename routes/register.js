@@ -22,7 +22,11 @@ router.route('/check_phone')
       if (err) {
         res.status(err.status).send();
       } else {
-        res.status(200).send(key);
+        res.status(200).json({
+          "check_sms": "/api/v1/reg/check_sms",
+          "get_phonebook": "/api/v1/app/get_phonebook",
+          "key": key
+        });
       }
     });
   });
