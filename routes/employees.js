@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var debug = require('debug')('routes:employees');
+var debug = require('debug')('app:routes:employees');
 var controller = require('../controllers/employees');
 
 router.use(function (req, res, next) {
@@ -15,7 +15,7 @@ router.use(function (req, res, next) {
  *
  * @apiParam {String} phoneNumber
  * @apiParam {String} key
- * 
+ *
  * @apiSuccess {Object} Книга контактов
  */
 router.route('/')

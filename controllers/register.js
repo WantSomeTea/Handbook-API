@@ -1,5 +1,6 @@
 var keygen = require('keygen');
 var httpError = require('../libs/error');
+var debug = require('debug')('app:controllers:register');
 
 /**
  * Проверка телефона
@@ -14,6 +15,7 @@ var httpError = require('../libs/error');
  * @param  {Function} callback [description]
  * @return {String}            key
  */
+/*
 exports.checkPhoneAndSendSMS = function(req, callback) {
   var phoneNumber = req.query.phoneNumber;
   req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
@@ -42,7 +44,7 @@ exports.checkPhoneAndSendSMS = function(req, callback) {
     }
   });
 };
-
+*/
 /**
  * Проверка SMS
  * @method checkSMS
@@ -50,6 +52,7 @@ exports.checkPhoneAndSendSMS = function(req, callback) {
  * @param  {Function} callback [description]
  * @return {object}            Результат функции employees.find
  */
+/*
 exports.checkSMS = function(req, callback) {
   var smsCode = req.query.code;
   var key = req.query.key;
@@ -68,6 +71,58 @@ exports.checkSMS = function(req, callback) {
       } else {
         callback(null, result);
       }
+    }
+  });
+};
+*/
+
+/**
+ * Проверка на наличие телефона и отправка SMS на номер
+ * @method checkPhone
+ * @param  {[type]}   req      [description]
+ * @param  {Function} callback [description]
+ * @return {String} phoneNumber
+ */
+exports.checkPhone = function(req, callback) {
+  var phoneNumber = req.query.phoneNumber;
+  req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
+    if (err) {
+      callback(httpError(500, "Database Error (employees.find{phoneNumber})"), null);
+    } else if (result[0] == undefined) {
+      callback(httpError(400, "Empty result (employees.find{phoneNumber})"), null); // NOTE: Или 403?
+    } else {
+      debug("Телефон найден в базе", result);
+      callback(null, phoneNumber);
+    }
+  });
+};
+
+/**
+ * Регистрация телефона и возвращение ключа для работы с API
+ * @method register
+ * @param  {[type]}   req      [description]
+ * @param  {Function} callback [description]
+ * @return {String} key
+ */
+exports.register = function(req, callback) {
+  var phoneNumber = req.query.phoneNumber;
+  req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
+    if (err) {
+      callback(httpError(500, "Database Error (employees.find{phoneNumber})"), null);
+    } else if (result[0] == undefined) {
+      callback(httpError(400, "Empty result (employees.find{phoneNumber})"), null); // NOTE: Или 403?
+    } else {
+      var key = keygen.url(keygen.large);
+      result[0].save({key: key}, function (err, result) {
+        if (err) {
+          callback(httpError(500, "Database Error (result[0].save{key})"), null);
+        } else {
+          // TODO: Дополнительные процессы регистрации:
+          //         Уведомления
+          //         Еще что-нибудь
+          callback(null, key);
+        }
+      });
     }
   });
 };

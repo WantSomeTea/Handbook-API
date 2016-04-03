@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "author": "Trofimov Pavel & Sergey Kuchin & Alex Agapov",
   "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
-  },
   "dependencies": {
     "async": "^2.0.0-rc.2",
     "body-parser": "~1.13.2",
@@ -20,5 +17,12 @@
     "mysql": "^2.10.2",
     "orm": "^2.1.30",
     "pm2": "^1.0.2"
+  },
+  "scripts": {
+    "console": "node ./bin/www",
+    "debug": "DEBUG=* node ./bin/www",
+    "start": "pm2 start ./bin/www",
+    "production": "PORT=80 pm2 start ./bin/www",
+    "production-https": "PORT=443 pm2 start ./bin/www"
   }
 }

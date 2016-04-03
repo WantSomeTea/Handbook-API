@@ -1,6 +1,6 @@
 var async = require('async');
 var httpError = require('../libs/error');
-var debug = require('debug')('controllers:employees');
+var debug = require('debug')('app:controllers:employees');
 
 /**
  * @method getJobName - для получения названия департамента, должности и компании
