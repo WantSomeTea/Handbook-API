@@ -30,12 +30,6 @@ router.route('/')
     });
   });
 
-router.route('/test')
-  .get(function(req, res) {
-    debug(req);
-    res.status(200).send();
-  });
-
 // Нужна ли будет функция в будущем?
 router.route('/:userId')
   // GET contact by userId
