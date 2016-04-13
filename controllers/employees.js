@@ -37,11 +37,12 @@ function getJobParams(companyID, jobID, req, callback) {
 
 exports.employeesWithCompanyID = function(req, callback) {
   var phoneNumber = req.query.phoneNumber;
-  /*TODO: это если запрос в виде /get_PB?phoneNumber=11111&key=qwe*/
   var key = req.query.key;
-
+  debug(phoneNumber);
+  debug(key);
   req.models.employees.find({phone_number: phoneNumber, key: key}, function (err, result) {
     if (err || !result[0]) {
+      debug(err);
       callback(httpError(500, "Database error (employees.find{phoneNumber,key})"), null);
     } else if (result[0] == undefined) {
       callback(httpError(400, "Empty result (employees.find{phoneNumber,key})"), null); //NOTE: Или 403?

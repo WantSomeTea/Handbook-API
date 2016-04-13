@@ -18,10 +18,11 @@ router.use(function (req, res, next) {
  *
  * @apiSuccess {Object} Книга контактов
  */
-router.route('/')
+router.route('')
   .get(function (req, res) {
     controller.employeesWithCompanyID(req, function(err, book) {
       if (err) {
+        console.error(err.message);
         res.status(err.status).send();
       } else {
         debug(book);

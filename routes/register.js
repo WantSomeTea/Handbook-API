@@ -20,6 +20,7 @@ router.route('/check_phone')
   .get(function (req, res) {
     controller.checkPhone(req, function(err, phone) {
       if (err) {
+        console.error(err.message);
         res.status(err.status).send();
       } else {
         debug(''+phone);
@@ -42,11 +43,12 @@ router.route('/register')
   .get(function (req, res) {
     controller.register(req, function(err, key) {
       if (err) {
+        console.error(err.message);
         res.status(err.status).send();
       } else {
         res.status(200).json({
           "requests": {
-            "employees": "/api/v1/app/employees/"
+            "employees": "/api/v1/app/employees"
           },
           "key": key
         });
