@@ -112,7 +112,7 @@ exports.register = function(req, callback) {
     } else if (result[0] == undefined) {
       callback(httpError(400, "Empty result (employees.find{phoneNumber})"), null); // NOTE: Или 403?
     } else {
-      var key = keygen.url(keygen.large);
+      var key = keygen.url();
       result[0].save({key: key}, function (err, result) {
         if (err) {
           callback(httpError(500, "Database Error (result[0].save{key})"), null);
