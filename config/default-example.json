@@ -4,7 +4,7 @@
     "port": 3306,
     "base": "handbook",
     "user": "king",
-    "password": "longlivetheking"
+    "password": "EXAMPLE"
   },
   "ports": {
     "default": 3000
