@@ -37,3 +37,6 @@ node_modules
 
 #Idea
 .idea
+
+#CONFIG SECURED FILE!
+config/default.json
