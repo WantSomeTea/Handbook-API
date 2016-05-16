@@ -6,8 +6,9 @@
 
 var app = require('../app');
 var debug = require('debug')('app:bin');
-var http = require('http');
+var https = require('https');
 var config = require('config');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -16,11 +17,16 @@ var config = require('config');
 var port = normalizePort(process.env.PORT || config.get('ports.default'));
 app.set('port', port);
 
+const options = {
+  pfx: fs.readFileSync('certs/factory-handbook.p12'),
+  passphrase: 'NynuzoudXYZB3065138'
+};
+
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = https.createServer(options, app);
 
 /**
  * Listen on provided port, on all network interfaces.
