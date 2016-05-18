@@ -9,5 +9,18 @@
   "ports": {
     "default": 3000
   },
-  "host": "localhost"
+  "redis": {
+    "host": "localhost",
+    "port": 6379
+  },
+  "host": "localhost",
+  "session": {
+    "secret": "sessionSecret",
+    "key": "sid",
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "maxAge": 7200000
+    }
+  }
 }

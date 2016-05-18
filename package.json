@@ -16,7 +16,12 @@
     "morgan": "~1.6.1",
     "mysql": "^2.10.2",
     "orm": "^2.1.30",
-    "pm2": "^1.0.2"
+    "pm2": "^1.0.2",
+    "express-session": "^1.13.0",
+    "lodash": "^4.6.1",
+    "pwd": "^1.0.0",
+    "random-number": "0.0.7",
+    "connect-redis": "^3.0.2"
   },
   "scripts": {
     "console": "node ./bin/www",
