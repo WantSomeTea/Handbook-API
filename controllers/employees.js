@@ -1,6 +1,7 @@
 var async = require('async');
 var httpError = require('../libs/error');
 var debug = require('debug')('app:controllers:employees');
+var crypt = require('../libs/crypt');
 
 /**
  * @method getJobName - для получения названия департамента, должности и компании
@@ -40,6 +41,7 @@ exports.employeesWithCompanyID = function(req, callback) {
   var key = req.query.key;
   debug(phoneNumber);
   debug(key);
+  phoneNumber = crypt.encrypt(phoneNumber);
   req.models.employees.find({phone_number: phoneNumber, key: key}, function (err, result) {
     if (err || !result[0]) {
       debug(err);
@@ -57,18 +59,21 @@ exports.employeesWithCompanyID = function(req, callback) {
             getJobParams(employee.id_company, employee.id_job, req, function (jobEmployee) {
               var obj = {
                 name: employee.fullName(),
-                phoneNumber: employee.phone_number,
-                workNumber: employee.work_number,
-                email: employee.email,
-                additionalNumbs: employee.additional_numbers,
+                phoneNumber: crypt.decrypt(employee.phone_number),
+                workNumber: crypt.decrypt(employee.work_number),
+                email: crypt.decrypt(employee.email),
+                additionalNumbs: crypt.decrypt(employee.additional_numbers),
                 companyName: jobEmployee.companyName,
                 jobName: jobEmployee.jobName,
                 departmentName: jobEmployee.departmentName
               };
+              console.log(1);
               resObj.push(obj);
+              console.log(2);
               callback();
             });
           }, function (err) {
+            console.log(3);
             if (err) {
               callback(httpError(500, "Async error"), null);
             } else {

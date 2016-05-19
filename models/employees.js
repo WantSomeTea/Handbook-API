@@ -1,6 +1,7 @@
 /**
  * Created by pavtr_000 on 21.03.2016.
  */
+var crypt = require('../libs/crypt');
 
 module.exports = function (db) {
   return db.define('employees', {
@@ -11,26 +12,26 @@ module.exports = function (db) {
       unique: true
     },
     second_name: {
-      type: 'text'
+      type: 'binary'
     },
     middle_name: {
-      type: 'text'
+      type: 'binary'
     },
     first_name: {
-      type: 'text',
+      type: 'binary',
       required: true
     },
     phone_number: {
-      type: 'text'
+      type: 'binary'
     },
     work_number: {
-      type: 'text'
+      type: 'binary'
     },
     email: {
-      type: 'text'
+      type: 'binary'
     },
     additional_numbers: {
-      type: 'text'
+      type: 'binary'
     },
     id_company: {
       type: 'number',
@@ -49,7 +50,10 @@ module.exports = function (db) {
   }, {
     methods: {
       fullName: function () {
-        return this.second_name + ' ' + this.first_name + ' ' + this.middle_name;
+        var secondName = crypt.decrypt(this.second_name);
+        var firstName = crypt.decrypt(this.first_name);
+        var middleName = crypt.decrypt(this.middle_name);
+        return secondName + ' ' + firstName + ' ' + middleName;
       }
     }
   });
