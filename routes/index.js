@@ -1,16 +1,25 @@
-var express = require('express');
-var router = express.Router();
-var register = require('./register');
-var employees = require('./employees');
-var insert = require('./insert');
+var express = require('express')
+var router = express.Router()
+var debug = require('debug')('app:routes:index')
 
-/* GET home page. */
-router.get('/', function(req, res) {
-  res.status(200).send("API status OK");
-});
+var checkAuth = require('./../middleware/checkAuth')
+var company = require('./../middleware/getSettings')
 
-router.use('/v1/reg', register);
-router.use('/v1/app/employees', employees);
-router.use('/v1/insert/employees', insert);
+router.get('/', checkAuth, company, function (req, res, next) {
+  debug('GET / router')
+  res.render('index', {
+    title: req.company.name,
+    username: req.session.user.username
+  })
+})
 
-module.exports = router;
+router.get('/signin', function (req, res, next) {
+  res.render('signin')
+})
+
+router.post('/signout', function (req, res) {
+  req.session.destroy()
+  res.redirect('/signin')
+})
+
+module.exports = router
