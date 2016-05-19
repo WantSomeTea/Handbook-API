@@ -1,7 +1,4 @@
-/**
- * Created by pavtr_000 on 21.03.2016.
- */
-var crypt = require('../libs/crypt');
+var crypt = require('../libs/crypt')
 
 module.exports = function (db) {
   return db.define('employees', {
@@ -50,11 +47,11 @@ module.exports = function (db) {
   }, {
     methods: {
       fullName: function () {
-        var secondName = crypt.decrypt(this.second_name);
-        var firstName = crypt.decrypt(this.first_name);
-        var middleName = crypt.decrypt(this.middle_name);
-        return secondName + ' ' + firstName + ' ' + middleName;
+        var secondName = crypt.decrypt(this.second_name)
+        var firstName = crypt.decrypt(this.first_name)
+        var middleName = crypt.decrypt(this.middle_name)
+        return secondName + ' ' + firstName + ' ' + middleName
       }
     }
-  });
-};
+  })
+}

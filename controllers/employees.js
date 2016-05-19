@@ -1,7 +1,7 @@
-var async = require('async');
-var httpError = require('../libs/error');
-var debug = require('debug')('app:controllers:employees');
-var crypt = require('../libs/crypt');
+var async = require('async')
+var httpError = require('../libs/error')
+var debug = require('debug')('app:controllers:employees')
+var crypt = require('../libs/crypt')
 
 /**
  * @method getJobName - для получения названия департамента, должности и компании
@@ -10,51 +10,51 @@ var crypt = require('../libs/crypt');
  * @param callback
  * @param companyID
  * */
-function getJobParams(companyID, jobID, req, callback) {
-  var jobEmployee = {};
+function getJobParams (companyID, jobID, req, callback) {
+  var jobEmployee = {}
   req.models.companies.find({id_company: companyID}, function (err, result) {
     if (err) {
-      jobEmployee.companyName = null;
+      jobEmployee.companyName = null
     } else {
-      jobEmployee.companyName = result[0].name;
+      jobEmployee.companyName = result[0].name
       req.models.job.find({id_job: jobID}, function (err, result) {
         if (err) {
-          jobEmployee.jobName = null;
+          jobEmployee.jobName = null
         } else {
-          jobEmployee.jobName = result[0].name;
+          jobEmployee.jobName = result[0].name
           req.models.departments.find({id_department: result[0].id_department}, function (err, result) {
             if (err) {
-              jobEmployee.departmentName = null;
+              jobEmployee.departmentName = null
             } else {
-              jobEmployee.departmentName = result[0].name;
-              callback(jobEmployee);
+              jobEmployee.departmentName = result[0].name
+              callback(jobEmployee)
             }
-          });
+          })
         }
-      });
+      })
     }
-  });
+  })
 }
 
-exports.employeesWithCompanyID = function(req, callback) {
-  var phoneNumber = req.query.phoneNumber;
-  var key = req.query.key;
-  debug(phoneNumber);
-  debug(key);
-  phoneNumber = crypt.encrypt(phoneNumber);
+exports.employeesWithCompanyID = function (req, callback) {
+  var phoneNumber = req.query.phoneNumber
+  var key = req.query.key
+  // debug(phoneNumber)
+  // debug(key)
+  phoneNumber = crypt.encrypt(phoneNumber)
   req.models.employees.find({phone_number: phoneNumber, key: key}, function (err, result) {
     if (err || !result[0]) {
-      debug(err);
-      callback(httpError(500, "Database error (employees.find{phoneNumber,key})"), null);
+      debug(err)
+      callback(httpError(500, 'Database error (employees.find{phoneNumber,key})'), null)
     } else if (result[0] == undefined) {
-      callback(httpError(400, "Empty result (employees.find{phoneNumber,key})"), null); //NOTE: Или 403?
+      callback(httpError(400, 'Empty result (employees.find{phoneNumber,key})'), null) // NOTE: Или 403?
     } else {
-      var idCompany = result[0].id_company;
+      var idCompany = result[0].id_company
       req.models.employees.find({id_company: idCompany}, function (err, result) {
         if (err) {
-          callback(httpError(500, "Database error (employees.find{idCompany})"), null);
+          callback(httpError(500, 'Database error (employees.find{idCompany})'), null)
         } else {
-          var resObj = [];
+          var resObj = []
           async.forEach(result, function (employee, callback) {
             getJobParams(employee.id_company, employee.id_job, req, function (jobEmployee) {
               var obj = {
@@ -66,23 +66,26 @@ exports.employeesWithCompanyID = function(req, callback) {
                 companyName: jobEmployee.companyName,
                 jobName: jobEmployee.jobName,
                 departmentName: jobEmployee.departmentName
-              };
-              console.log(1);
-              resObj.push(obj);
-              console.log(2);
-              callback();
-            });
+              }
+              debug(1)
+              resObj.push(obj)
+              debug(2)
+              callback()
+            })
           }, function (err) {
-            console.log(3);
+            debug(3)
             if (err) {
-              callback(httpError(500, "Async error"), null);
+              debug(4)
+              debug(err.message)
+              callback(httpError(500, 'Async error'), null)
             } else {
-              debug(resObj);
-              callback(null, resObj);
+              debug(5)
+              // debug(resObj)
+              callback(null, resObj)
             }
-          });
+          })
         }
-      });
+      })
     }
-  });
-};
+  })
+}

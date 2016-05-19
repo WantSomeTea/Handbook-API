@@ -1,6 +1,7 @@
-var keygen = require('keygen');
-var httpError = require('../libs/error');
-var debug = require('debug')('app:controllers:register');
+var keygen = require('keygen')
+var httpError = require('../libs/error')
+var debug = require('debug')('app:controllers:register')
+var crypt = require('../libs/crypt')
 
 /**
  * Проверка телефона
@@ -17,33 +18,33 @@ var debug = require('debug')('app:controllers:register');
  */
 /*
 exports.checkPhoneAndSendSMS = function(req, callback) {
-  var phoneNumber = req.query.phoneNumber;
+  var phoneNumber = req.query.phoneNumber
   req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
     if (err) {
-      callback(httpError(500, "Database Error (employees.find{phoneNumber})"), null);
+      callback(httpError(500, "Database Error (employees.find{phoneNumber})"), null)
     } else if (result[0] == undefined) {
       callback(httpError(400, "Empty result (employees.find{phoneNumber})"), null); // NOTE: Или 403?
     } else {
-      var key = keygen.url(keygen.large);
+      var key = keygen.url(keygen.large)
       result[0].save({key: key}, function (err, result) {
         if (err) {
-          callback(httpError(500, "Database Error (result[0].save{key})"), null);
+          callback(httpError(500, "Database Error (result[0].save{key})"), null)
         } else {
-          var smsCode = (Math.floor(Math.random() * (9999 - 1000) + 1000)).toString();
-          result[0].sms_code = smsCode;
+          var smsCode = (Math.floor(Math.random() * (9999 - 1000) + 1000)).toString()
+          result[0].sms_code = smsCode
           result[0].save(function (err) {
             if (err) {
-              callback(httpError(500, "Database Error (result[0].save{})"), null);
+              callback(httpError(500, "Database Error (result[0].save{})"), null)
             } else {
               // TODO: как-то отправляем смс
-              callback(null, key);
+              callback(null, key)
             }
-          });
+          })
         }
-      });
+      })
     }
-  });
-};
+  })
+}
 */
 /**
  * Проверка SMS
@@ -54,26 +55,26 @@ exports.checkPhoneAndSendSMS = function(req, callback) {
  */
 /*
 exports.checkSMS = function(req, callback) {
-  var smsCode = req.query.code;
-  var key = req.query.key;
-  var phoneNumber = req.query.phoneNumber;
+  var smsCode = req.query.code
+  var key = req.query.key
+  var phoneNumber = req.query.phoneNumber
 
   req.models.employees.find({phoneNumber: phoneNumber, key: key}, function (err, result) {
     if (err) {
-      callback(httpError(500, "Database Error"), null);
+      callback(httpError(500, "Database Error"), null)
     } else if (result[0] == undefined) {
-      callback(httpError(400, "Empty result"), null);
+      callback(httpError(400, "Empty result"), null)
     } else {
       if (result[0].sms_code == '1010') {
         callback(null, result); //NOTE: Чит-код 1010
       } else if (result[0].sms_code !== smsCode) {
-        callback(httpError(403, "Wrong SMS code"), null);
+        callback(httpError(403, "Wrong SMS code"), null)
       } else {
-        callback(null, result);
+        callback(null, result)
       }
     }
-  });
-};
+  })
+}
 */
 
 /**
@@ -83,19 +84,19 @@ exports.checkSMS = function(req, callback) {
  * @param  {Function} callback [description]
  * @return {String} phoneNumber
  */
-exports.checkPhone = function(req, callback) {
-  var phoneNumber = req.query.phoneNumber;
+exports.checkPhone = function (req, callback) {
+  var phoneNumber = crypt.encrypt(req.query.phoneNumber)
   req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
     if (err) {
-      callback(httpError(500, "Database Error (employees.find{phoneNumber})"), null);
+      callback(httpError(500, 'Database Error (employees.find{phoneNumber})'), null)
     } else if (result[0] == undefined) {
-      callback(httpError(400, "Empty result (employees.find{phoneNumber})"), null); // NOTE: Или 403?
+      callback(httpError(400, 'Empty result (employees.find{phoneNumber})'), null) // NOTE: Или 403?
     } else {
-      debug("Телефон найден в базе", result);
-      callback(null, phoneNumber);
+      debug('Телефон найден в базе', result)
+      callback(null, req.query.phoneNumber)
     }
-  });
-};
+  })
+}
 
 /**
  * Регистрация телефона и возвращение ключа для работы с API
@@ -104,25 +105,25 @@ exports.checkPhone = function(req, callback) {
  * @param  {Function} callback [description]
  * @return {String} key
  */
-exports.register = function(req, callback) {
-  var phoneNumber = req.query.phoneNumber;
+exports.register = function (req, callback) {
+  var phoneNumber = crypt.encrypt(req.query.phoneNumber)
   req.models.employees.find({phone_number: phoneNumber}, function (err, result) {
     if (err) {
-      callback(httpError(500, "Database Error (employees.find{phoneNumber})"), null);
+      callback(httpError(500, 'Database Error (employees.find{phoneNumber})'), null)
     } else if (result[0] == undefined) {
-      callback(httpError(400, "Empty result (employees.find{phoneNumber})"), null); // NOTE: Или 403?
+      callback(httpError(400, 'Empty result (employees.find{phoneNumber})'), null) // NOTE: Или 403?
     } else {
-      var key = keygen.url();
+      var key = keygen.url()
       result[0].save({key: key}, function (err, result) {
         if (err) {
-          callback(httpError(500, "Database Error (result[0].save{key})"), null);
+          callback(httpError(500, 'Database Error (result[0].save{key})'), null)
         } else {
           // TODO: Дополнительные процессы регистрации:
           //         Уведомления
           //         Еще что-нибудь
-          callback(null, key);
+          callback(null, key)
         }
-      });
+      })
     }
-  });
-};
+  })
+}

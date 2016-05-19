@@ -31,6 +31,7 @@ router.get('/search', function (req, res, next) {
     if (err) {
       next(error(500, 'Ошибка, повторите попытку позже'))
     }
+    debug(objects.slice)
     res.send({
       objects: objects.slice,
       paginator: {
