@@ -1,9 +1,12 @@
 var express = require('express')
 var router = express.Router()
+var debug = require('debug')('app:routes:index')
+
 var checkAuth = require('./../middleware/checkAuth')
 var company = require('./../middleware/getSettings')
 
 router.get('/', checkAuth, company, function (req, res, next) {
+  debug()
   res.render('index', {
     title: req.company.name,
     username: req.session.user.username

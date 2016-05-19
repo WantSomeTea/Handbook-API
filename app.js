@@ -38,7 +38,6 @@ app.use(express.static(path.join(__dirname, 'public')))
 require('./libs/connect')(app)
 
 // routes
-
 app.use(session({
   secret: config.get('session.secret'),
   key: config.get('session.key'),
@@ -83,6 +82,7 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
     res.status(err.status || 500)
+    debug(err)
     res.render('error', {
       message: err.message,
       error: err
@@ -94,7 +94,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
   res.status(err.status || 500)
-  debug(err);
+  debug(err)
   res.render('error', {
     message: err.message,
     error: {}

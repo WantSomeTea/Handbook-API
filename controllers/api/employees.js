@@ -1,23 +1,23 @@
 /**
  * Created by pavtr_000 on 11.03.2016.
  */
-var express = require('express'),
-  error = require('./../../libs/error'),
-  router = express.Router(),
-  orm = require('orm'),
-  async = require('async'),
-  _ = require('lodash'),
-    rn = require('random-number');
+var express = require('express')
+var error = require('./../../libs/error')
+var router = express.Router()
+var orm = require('orm')
+var async = require('async')
+var _ = require('lodash')
+var rn = require('random-number')
 var randomOpts = {
-  min:  100000,
-  max:  999999,
+  min: 100000,
+  max: 999999,
   integer: true
-};
+}
 router.get('/search', function (req, res, next) {
-  var page = parseInt(req.query.page);
-  var offset = (page - 1) * req.query.limit;
-  offset = parseInt(offset < 0 ? 0 : offset);
-  console.log(req.session.user.id_company);
+  var page = parseInt(req.query.page)
+  var offset = (page - 1) * req.query.limit
+  offset = parseInt(offset < 0 ? 0 : offset)
+  console.log(req.session.user.id_company)
 
   var searchParams = {
     id_company: req.session.user.id_company,
@@ -27,51 +27,51 @@ router.get('/search', function (req, res, next) {
     sortDir: req.query.sortDir,
     offset: offset
   };
-  pageFilter(searchParams, req, function(err, objects){
+  pageFilter(searchParams, req, function(err, objects) {
     if (err) {
-      next(error(500, 'Ошибка, повторите попытку позже'));
+      next(error(500, 'Ошибка, повторите попытку позже'))
     }
     res.send({
-      objects:objects.slice,
+      objects: objects.slice,
       paginator: {
         currentPage: page,
         total: objects.objectsCount,
-        lastPage: Math.ceil(objects.objectsCount/ objects.limit)
+        lastPage: Math.ceil(objects.objectsCount / objects.limit)
       }
-    });
-  });
-});
+    })
+  })
+})
 
-/*add employee*/
+// add employee
 router.post('/', function (req, res, next) {
-var newEmployee = {
-  first_name: req.body.first_name,
-  middle_name: req.body.middle_name,
-  second_name: req.body.second_name,
-  id_employee: rn(randomOpts),
-  phone_number: req.body.phoneNumber,
-  work_number: req.body.workNumber,
-  email: req.body.email,
-  id_company: req.session.user.id_company
-};
+  var newEmployee = {
+    first_name: req.body.first_name,
+    middle_name: req.body.middle_name,
+    second_name: req.body.second_name,
+    id_employee: rn(randomOpts),
+    phone_number: req.body.phoneNumber,
+    work_number: req.body.workNumber,
+    email: req.body.email,
+    id_company: req.session.user.id_company
+  }
   getJobID(req.body.jobName, req, function (jobID) {
-    newEmployee.id_job=jobID;
+    newEmployee.id_job = jobID
     checkUser(newEmployee.phone_number, req, function (checkErr, checkResult) {
-      if(checkErr) {
-        next(error(400, 'error'));
-      } else if (!checkResult){
+      if (checkErr) {
+        next(error(400, 'error'))
+      } else if (!checkResult) {
         req.models.employees.create(newEmployee, function (err, result) {
-          if(err) {
-            next(error(500, 'creating error'));
+          if (err) {
+            next(error(500, 'creating error'))
           } else {
-            res.status(200).send();
+            res.status(200).send()
           }
         })
       } else {
         req.models.employees.find({phone_number: newEmployee.phone_number}, function (err, result) {
           result[0].save(newEmployee, function (err) {
-            if(err) next(error(400,'error'));
-            else res.status(200).send();
+            if (err) next(error(400,'error'))
+            else res.status(200).send()
           })
         })
       }
@@ -101,12 +101,12 @@ router.delete('/:phoneNumber', function (req, res, next) {
   var key = {
     id_company: req.session.user.id_company,
     phone_number: req.params.phoneNumber
-  };
+  }
   req.models.employees.find(key).remove(function (err) {
-    if(err) next(error(500, 'cant remove employee'));
-    res.status(200).send();
+    if(err) next(error(500, 'cant remove employee'))
+    res.status(200).send()
   })
-});
+})
 
 
 

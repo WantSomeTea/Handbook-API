@@ -1,46 +1,53 @@
 /**
  * Created by pavtr_000 on 11.03.2016.
  */
-var async = require('async'),
-  pwd = require('pwd'),
-  error = require('./../../libs/error'),
-  express = require('express'),
-  router = express.Router();
+var async = require('async')
+var pwd = require('pwd')
+var error = require('./../../libs/error')
+var express = require('express')
+var router = express.Router()
 
 router.post('/signin', function (req, res, next) {
-  var username = req.query.username,
-    password = req.query.password;
+  var username = req.query.username
+  var password = req.query.password
+  console.log(username + ' ' + password)
   async.waterfall([
     function (callback) {
-      req.models.admin.find({username: username}, callback);
+      console.log('Almost .find')
+      req.models.admin.find({username: username}, callback)
     },
     function (user, callback) {
-      if (user.length != 0) {
+      if (user.length !== 0) {
         pwd.hash(password, user[0].salt, function (err, hash) {
           if (err) {
-            callback(err);
+            console.log(err)
+            callback(err)
           }
           if (user[0].hash == hash) {
-            callback(null, user);
+            console.log('Almost 200')
+            callback(null, user)
           } else {
-            next(error(404, 'Неверное имя пользователя или пароль'));
+            console.log('Almost 404 1')
+            next(error(404, 'Неверное имя пользователя или пароль'))
           }
         })
       } else {
-        next(error(404, 'Неверное имя пользователя или пароль'));
+        console.log('Almost 404 2')
+        next(error(404, 'Неверное имя пользователя или пароль'))
       }
     }], function (err, user) {
     if (err) {
-      next(error(500, 'Ошибка аутентификации'));
+      console.log(err)
+      next(error(500, 'Ошибка аутентификации'))
     } else if (user) {
       req.session.user = {
         id_company: user[0].id_company,
         username: user[0].username
-      };
-      res.send(200);
+      }
+      console.log('Almost 200')
+      res.send(200)
     }
-  });
-});
+  })
+})
 
-
-module.exports = router;
+module.exports = router

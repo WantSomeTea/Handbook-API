@@ -21,7 +21,5 @@ module.exports = function (db) {
       required: true,
       unique: true
     }
-  });
-};
-
-
+  })
+}
