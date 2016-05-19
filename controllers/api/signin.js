@@ -1,6 +1,3 @@
-/**
- * Created by pavtr_000 on 11.03.2016.
- */
 var async = require('async')
 var pwd = require('pwd')
 var error = require('./../../libs/error')

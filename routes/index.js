@@ -6,7 +6,7 @@ var checkAuth = require('./../middleware/checkAuth')
 var company = require('./../middleware/getSettings')
 
 router.get('/', checkAuth, company, function (req, res, next) {
-  debug()
+  debug('GET / router')
   res.render('index', {
     title: req.company.name,
     username: req.session.user.username
