@@ -13,20 +13,6 @@ var sessionStore = require('./libs/sessionStore')(session)
 app.use(morgan('dev'))
 app.use(bodyParser.json()) // Позволяет передавать в body запроса json
 app.use(bodyParser.urlencoded({ extended: false })) // позволяет передавать в body запроса key=value
-// app.use(cookieParser()); // TODO: Зачем нужна?
-
-/*
- req: https://ip/api/v1/reg/check_phone/params(phoneNumber)
- res: 200/404 + key(52) + paths
-
- req: https://ip/api/v1/reg/check_sms/params(code, phonenumber, key)
- res: 403/200
-
- наверно последнее действие должно быть отдельным запросом
- запрос тел.книги:
- req: https://ip/api/v1/app/get_phonebook/params(phonenumber, key)
- res: 403/200 + data
-*/
 
 // views
 // view engine setup
@@ -64,41 +50,43 @@ app.use(function (req, res, next) {
 
 // development error handler
 // will print stacktrace
-// if (app.get('env') === 'development') {
-//   app.use(function (err, req, res, next) {
-//     res.sendStatus(err.status || 500)
-//   })
-// }
-//
+if (app.get('env') === 'development') {
+  app.use(function (err, req, res, next) {
+    debug('shit ' + err.message)
+    // res.status(err.status || 500).send()
+  })
+}
+
 // // production error handler
 // // no stacktraces leaked to user
-// app.use(function (err, req, res, next) {
-//   res.sendStatus(err.status || 500)
-// })
+app.use(function (err, req, res, next) {
+  debug('something wrong ' + err.message)
+  // res.status(err.status || 500).send()
+})
 
 // Пашины хендлеры. Нужны ли?
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function (err, req, res, next) {
-    res.status(err.status || 500)
-    debug(err)
-    res.render('error', {
-      message: err.message,
-      error: err
-    })
-  })
-}
+// if (app.get('env') === 'development') {
+//   app.use(function (err, req, res, next) {
+//     res.status(err.status || 500)
+//     debug(err)
+//     res.render('error', {
+//       message: err.message,
+//       error: err
+//     })
+//   })
+// }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
-  res.status(err.status || 500)
-  debug(err)
-  res.render('error', {
-    message: err.message,
-    error: {}
-  })
-})
+// app.use(function (err, req, res, next) {
+//   res.status(err.status || 500)
+//   debug(err)
+//   res.render('error', {
+//     message: err.message,
+//     error: {}
+//   })
+// })
 
 module.exports = app
